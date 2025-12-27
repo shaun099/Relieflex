@@ -5,15 +5,16 @@ import {
   StyleSheet,
   TextInput,
   Pressable,
-  Image,
   ScrollView,
 } from "react-native";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 
-export default function LoginScreen() {
+export default function SignupScreen() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -22,19 +23,39 @@ export default function LoginScreen() {
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
       >
-        {/* Logo */}
-        <View style={styles.logoContainer}>
-          <View style={styles.logoBox}>
-            <MaterialIcons name="monitor-heart" size={40} color="#fff" />
-          </View>
+        {/* Header */}
+        <View style={styles.header}>
+          <Pressable onPress={() => router.back()}>
+            <Ionicons name="arrow-back" size={24} color="#000" />
+          </Pressable>
         </View>
 
         {/* Title */}
-        <View style={styles.header}>
-          <Text style={styles.title}>Welcome Back</Text>
+        <View style={styles.titleSection}>
+          <Text style={styles.title}>Create Account</Text>
           <Text style={styles.subtitle}>
-            Sign in to control your thermal band and track your vitals.
+            Sign up to start using your thermal band.
           </Text>
+        </View>
+
+        {/* Full Name */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Full Name</Text>
+          <View style={styles.inputWrapper}>
+            <TextInput
+              value={name}
+              onChangeText={setName}
+              placeholder="Enter your full name"
+              placeholderTextColor="#999"
+              style={styles.input}
+            />
+            <MaterialIcons
+              name="person-outline"
+              size={20}
+              color="#888"
+              style={styles.inputIcon}
+            />
+          </View>
         </View>
 
         {/* Email */}
@@ -66,7 +87,7 @@ export default function LoginScreen() {
             <TextInput
               value={password}
               onChangeText={setPassword}
-              placeholder="Enter your password"
+              placeholder="Create password"
               placeholderTextColor="#999"
               secureTextEntry={!showPassword}
               style={styles.input}
@@ -82,51 +103,43 @@ export default function LoginScreen() {
               />
             </Pressable>
           </View>
-
-          <Pressable style={styles.forgot}>
-            <Text style={styles.forgotText}>Forgot Password?</Text>
-          </Pressable>
         </View>
 
-        {/* Login Button */}
-        <Pressable style={styles.loginButton}>
-          <Text style={styles.loginText}>Log In</Text>
-        </Pressable>
-
-        {/* Divider */}
-        <View style={styles.dividerRow}>
-          <View style={styles.divider} />
-          <Text style={styles.dividerText}>Or continue with</Text>
-          <View style={styles.divider} />
-        </View>
-
-        {/* Social Buttons */}
-        <View style={styles.socialRow}>
-          <Pressable style={styles.socialButton}>
-            <Image
-              source={{
-                uri: "https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo_2013_Google.png",
-              }}
-              style={styles.socialIcon}
+        {/* Confirm Password */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Confirm Password</Text>
+          <View style={styles.inputWrapper}>
+            <TextInput
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              placeholder="Re-enter password"
+              placeholderTextColor="#999"
+              secureTextEntry={!showPassword}
+              style={styles.input}
             />
-            <Text style={styles.socialText}>Google</Text>
-          </Pressable>
-
-          <Pressable style={styles.socialButton}>
-            <Ionicons name="logo-apple" size={22} color="#000" />
-            <Text style={styles.socialText}>Apple</Text>
-          </Pressable>
+            <MaterialIcons
+              name="lock-outline"
+              size={20}
+              color="#888"
+              style={styles.inputIcon}
+            />
+          </View>
         </View>
+
+        {/* Sign Up Button */}
+        <Pressable style={styles.signupButton}>
+          <Text style={styles.signupText}>Create Account</Text>
+        </Pressable>
 
         {/* Footer */}
         <View style={styles.footer}>
           <Text style={styles.footerText}>
-            Don&apos;t have an account?{" "}
+            Already have an account?{" "}
             <Text
-              style={styles.signup}
-              onPress={() => router.push("/signup")}
+              style={styles.loginLink}
+              onPress={() => router.replace("/login")}
             >
-              Sign up
+              Log in
             </Text>
           </Text>
         </View>
@@ -142,28 +155,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f7f7f7",
   },
-  logoContainer: {
-    alignItems: "center",
-    marginTop: 60,
-    marginBottom: 24,
-  },
-  logoBox: {
-    width: 64,
-    height: 64,
-    borderRadius: 14,
-    backgroundColor: "#141414",
-    alignItems: "center",
-    justifyContent: "center",
-  },
   header: {
+    padding: 16,
+  },
+  titleSection: {
     alignItems: "center",
     paddingHorizontal: 24,
-    marginBottom: 30,
+    marginBottom: 28,
   },
   title: {
     fontSize: 32,
     fontWeight: "800",
-    textAlign: "center",
   },
   subtitle: {
     fontSize: 15,
@@ -174,7 +176,7 @@ const styles = StyleSheet.create({
   },
   inputGroup: {
     paddingHorizontal: 24,
-    marginBottom: 18,
+    marginBottom: 16,
   },
   label: {
     fontSize: 14,
@@ -199,67 +201,19 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 14,
   },
-  forgot: {
-    alignItems: "flex-end",
-    marginTop: 6,
-  },
-  forgotText: {
-    fontSize: 13,
-    color: "#777",
-  },
-  loginButton: {
+  signupButton: {
     marginHorizontal: 24,
     height: 54,
     backgroundColor: "#141414",
     borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 10,
+    marginTop: 12,
   },
-  loginText: {
+  signupText: {
     color: "#fff",
     fontSize: 16,
     fontWeight: "700",
-  },
-  dividerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: 20,
-    paddingHorizontal: 24,
-  },
-  divider: {
-    flex: 1,
-    height: 1,
-    backgroundColor: "#ddd",
-  },
-  dividerText: {
-    marginHorizontal: 10,
-    fontSize: 13,
-    color: "#777",
-  },
-  socialRow: {
-    flexDirection: "row",
-    gap: 12,
-    paddingHorizontal: 24,
-  },
-  socialButton: {
-    flex: 1,
-    height: 48,
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "#e5e5e5",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
-  },
-  socialIcon: {
-    width: 20,
-    height: 20,
-  },
-  socialText: {
-    fontWeight: "600",
   },
   footer: {
     flex: 1,
@@ -270,7 +224,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "#777",
   },
-  signup: {
+  loginLink: {
     fontWeight: "700",
     color: "#141414",
   },
