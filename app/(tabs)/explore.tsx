@@ -1,112 +1,331 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import Slider from "@react-native-community/slider";
+import React, { useState } from "react";
+import {
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  StatusBar,
+} from "react-native";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { Collapsible } from '@/components/ui/collapsible';
-import { ExternalLink } from '@/components/external-link';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Fonts } from '@/constants/theme';
+const MIN_TEMP = 30;
+const MAX_TEMP = 50;
 
-export default function TabTwoScreen() {
+const ThermoBandScreen: React.FC = () => {
+  const [temperature, setTemperature] = useState<number>(40);
+  const insets = useSafeAreaInsets();
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText
-          type="title"
-          style={{
-            fontFamily: Fonts.rounded,
-          }}>
-          Explore
-        </ThemedText>
-      </ThemedView>
-      <ThemedText>This app includes example code to help you get started.</ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{' '}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-          different screen densities
-        </ThemedText>
-        <Image
-          source={require('@/assets/images/react-logo.png')}
-          style={{ width: 100, height: 100, alignSelf: 'center' }}
-        />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          what the user&apos;s current color scheme is, and so you can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{' '}
-          <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
-          the powerful{' '}
-          <ThemedText type="defaultSemiBold" style={{ fontFamily: Fonts.mono }}>
-            react-native-reanimated
-          </ThemedText>{' '}
-          library to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
-      </Collapsible>
-    </ParallaxScrollView>
+    <>
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor="#f7f7f7"
+        translucent={false}
+      />
+
+      <SafeAreaView
+        style={[
+          styles.safeArea,
+          {
+            paddingTop: insets.top, // ✅ prevents overlap
+          },
+        ]}
+        edges={["top", "left", "right"]}
+      >
+        <View style={styles.root}>
+          {/* Header */}
+          <View style={styles.header}>
+            <View style={styles.iconCircle}>
+              <Text style={styles.iconText}>BT</Text>
+            </View>
+
+            <View style={styles.headerCenter}>
+              <Text style={styles.headerTitle}>ThermoBand</Text>
+              <Text style={styles.statusText}>● Connected</Text>
+            </View>
+
+            <View style={styles.iconCircle}>
+              <Text style={styles.iconText}>75%</Text>
+            </View>
+          </View>
+
+          <ScrollView contentContainerStyle={styles.content}>
+            {/* Temperature Hero */}
+            <View style={styles.tempSection}>
+              <View style={styles.tempCircle}>
+                <Text style={styles.tempValue}>
+                  {Math.round(temperature)}°
+                </Text>
+                <Text style={styles.tempSub}>
+                  Heating to {Math.round(temperature)}°
+                </Text>
+              </View>
+
+              <Pressable
+                style={[styles.fab, styles.fabLeft]}
+                onPress={() =>
+                  setTemperature((t) => Math.max(MIN_TEMP, t - 1))
+                }
+              >
+                <Text style={styles.fabText}>−</Text>
+              </Pressable>
+
+              <Pressable
+                style={[styles.fab, styles.fabRight]}
+                onPress={() =>
+                  setTemperature((t) => Math.min(MAX_TEMP, t + 1))
+                }
+              >
+                <Text style={styles.fabText}>+</Text>
+              </Pressable>
+            </View>
+
+            {/* Heat Level */}
+            <View style={styles.card}>
+              <View style={styles.cardHeader}>
+                <Text style={styles.cardTitle}>Heat Level</Text>
+                <View style={styles.badge}>
+                  <Text style={styles.badgeText}>CUSTOM</Text>
+                </View>
+              </View>
+
+              <Slider
+                style={{ width: "100%", height: 40 }}
+                minimumValue={MIN_TEMP}
+                maximumValue={MAX_TEMP}
+                step={1}
+                value={temperature}
+                onValueChange={setTemperature}
+                minimumTrackTintColor="#141414"
+                maximumTrackTintColor="#d6d6d6"
+                thumbTintColor="#141414"
+              />
+
+              <View style={styles.sliderLabels}>
+                <Text style={styles.sliderLabel}>30°C</Text>
+                <Text style={styles.sliderLabel}>40°C</Text>
+                <Text style={styles.sliderLabel}>50°C</Text>
+              </View>
+
+              <View style={styles.presetRow}>
+                <Preset label="Low" value={34} setTemp={setTemperature} />
+                <Preset
+                  label="Med"
+                  value={40}
+                  setTemp={setTemperature}
+                  active
+                />
+                <Preset label="High" value={45} setTemp={setTemperature} />
+              </View>
+            </View>
+          </ScrollView>
+
+          {/* Bottom Bar */}
+          <View
+            style={[
+              styles.bottomBar,
+              { paddingBottom: insets.bottom || 16 },
+            ]}
+          >
+            <Pressable style={styles.powerButton}>
+              <Text style={styles.powerText}>Power Off</Text>
+            </Pressable>
+
+            <Pressable style={styles.settingsButton}>
+              <Text style={styles.iconText}>⚙</Text>
+            </Pressable>
+          </View>
+        </View>
+      </SafeAreaView>
+    </>
   );
-}
+};
+
+/* ---------- Preset ---------- */
+
+const Preset = ({
+  label,
+  value,
+  setTemp,
+  active,
+}: {
+  label: string;
+  value: number;
+  setTemp: (v: number) => void;
+  active?: boolean;
+}) => (
+  <Pressable
+    style={[styles.preset, active && styles.presetActive]}
+    onPress={() => setTemp(value)}
+  >
+    <Text style={[styles.presetLabel, active && styles.presetActiveText]}>
+      {label}
+    </Text>
+    <Text style={[styles.presetValue, active && styles.presetActiveText]}>
+      {value}°C
+    </Text>
+  </Pressable>
+);
+
+/* ---------- Styles ---------- */
 
 const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#f7f7f7",
   },
-  titleContainer: {
-    flexDirection: 'row',
-    gap: 8,
+
+  root: {
+    flex: 1,
+    backgroundColor: "#f7f7f7",
+  },
+
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 16,
+  },
+
+  headerCenter: { alignItems: "center" },
+
+  headerTitle: { fontSize: 18, fontWeight: "700" },
+
+  statusText: { fontSize: 12, color: "green" },
+
+  iconCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#eaeaea",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  iconText: { fontWeight: "600" },
+
+  content: { padding: 16, paddingBottom: 140 },
+
+  tempSection: { alignItems: "center", marginVertical: 24 },
+
+  tempCircle: {
+    width: 240,
+    height: 240,
+    borderRadius: 120,
+    borderWidth: 16,
+    borderColor: "#eee",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  tempValue: { fontSize: 56, fontWeight: "800" },
+
+  tempSub: { fontSize: 14, color: "#666" },
+
+  fab: {
+    position: "absolute",
+    top: "50%",
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+    elevation: 3,
+  },
+
+  fabLeft: { left: 0 },
+  fabRight: { right: 0 },
+
+  fabText: { fontSize: 24, fontWeight: "700" },
+
+  card: {
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 16,
+  },
+
+  cardHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 12,
+  },
+
+  cardTitle: { fontSize: 16, fontWeight: "700" },
+
+  badge: {
+    backgroundColor: "#141414",
+    borderRadius: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+  },
+
+  badgeText: { color: "#fff", fontSize: 10, fontWeight: "700" },
+
+  sliderLabels: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 4,
+  },
+
+  sliderLabel: { fontSize: 12, color: "#999" },
+
+  presetRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 16,
+  },
+
+  preset: {
+    flex: 1,
+    alignItems: "center",
+    paddingVertical: 12,
+    borderRadius: 12,
+    backgroundColor: "#f0f0f0",
+    marginHorizontal: 4,
+  },
+
+  presetActive: { backgroundColor: "#141414" },
+
+  presetLabel: { fontSize: 12, fontWeight: "700" },
+
+  presetValue: { fontSize: 10 },
+
+  presetActiveText: { color: "#fff" },
+
+  bottomBar: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    flexDirection: "row",
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    backgroundColor: "#f7f7f7",
+  },
+
+  powerButton: {
+    flex: 1,
+    height: 56,
+    backgroundColor: "#141414",
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 12,
+  },
+
+  powerText: { color: "#fff", fontSize: 18, fontWeight: "700" },
+
+  settingsButton: {
+    width: 56,
+    height: 56,
+    borderRadius: 14,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
+
+export default ThermoBandScreen;
