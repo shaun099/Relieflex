@@ -1,18 +1,21 @@
-import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TextInput,
-  Pressable,
-} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import React from "react";
+import {
+  Pressable,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function EditProfileScreen() {
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
+      <StatusBar barStyle="dark-content" backgroundColor="#f7f7f7" />
       {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={() => router.back()}>
@@ -49,19 +52,13 @@ export default function EditProfileScreen() {
           <Text style={styles.dangerText}>Log Out</Text>
         </Pressable>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 
 /* -------- REUSABLE INPUT -------- */
 
-function Input({
-  label,
-  value,
-}: {
-  label: string;
-  value: string;
-}) {
+function Input({ label, value }: { label: string; value: string }) {
   return (
     <View style={styles.inputContainer}>
       <Text style={styles.inputLabel}>{label}</Text>
