@@ -1,3 +1,4 @@
+import { triggerMassageVibration } from "@/components/haptic-feedback";
 import Slider from "@react-native-community/slider";
 import {
   Activity,
@@ -9,13 +10,20 @@ import {
   PowerOff,
   Waves,
 } from "lucide-react-native";
-import { useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import {
+  Animated,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const MIN_TEMP = 30;
-const MAX_TEMP = 50;
-const BATTERY_PERCENTAGE = 75;
+const MIN_TEMP = -10;
+const MAX_TEMP = 70;
+const BATTERY_PERCENTAGE = 65;
 
 type MassageMode = "off" | "soft" | "pulse" | "deep";
 type Mode = "relax" | "recovery";
@@ -23,9 +31,39 @@ type Mode = "relax" | "recovery";
 export default function TestScreen() {
   const [temperature, setTemperature] = useState<number>(40);
   const [massageMode, setMassageMode] = useState<MassageMode>("soft");
+
+  const handleMassageModeChange = (mode: MassageMode) => {
+    setMassageMode(mode);
+    triggerMassageVibration(mode);
+  };
   const [selectedMode, setSelectedMode] = useState<Mode>("recovery");
   const [isPoweredOn, setIsPoweredOn] = useState<boolean>(false);
   const [activePreset, setActivePreset] = useState<string>("med");
+
+  const animatedTemp = useRef(new Animated.Value(temperature)).current;
+
+  useEffect(() => {
+    Animated.timing(animatedTemp, {
+      toValue: temperature,
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+  }, [temperature]);
+
+  const borderColor = animatedTemp.interpolate({
+    inputRange: [-10, 0, 10, 20, 35, 45, 55, 70],
+    outputRange: [
+      "#0b3c5d", // Extreme Cold (−10 → −2)
+      "#1e40af", // Very Cold (−2 → 5)
+      "#2563eb", // Cold (5 → 12)
+      "#06b6d4", // Cool (12 → 20)
+      "#16a34a", // Comfortable (20 → 35)
+      "#facc15", // Warm (35 → 45)
+      "#fb923c", // Hot (45 → 55)
+      "#dc2626", // Danger (55 → 70)
+    ],
+  });
+
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
       <View style={styles.root}>
@@ -47,12 +85,14 @@ export default function TestScreen() {
         <ScrollView contentContainerStyle={styles.content}>
           {/* Temperature Hero */}
           <View style={styles.tempSection}>
-            <View style={styles.tempCircle}>
+            <Animated.View
+              style={[styles.tempCircle, { borderColor: borderColor }]}
+            >
               <Text style={styles.tempValue}>{Math.round(temperature)}°</Text>
               <Text style={styles.tempSub}>
                 Heating to {Math.round(temperature)}°
               </Text>
-            </View>
+            </Animated.View>
 
             <Pressable
               style={[styles.fab, styles.fabLeft]}
@@ -91,29 +131,29 @@ export default function TestScreen() {
             />
 
             <View style={styles.sliderLabels}>
+              <Text style={styles.sliderLabel}>-10°C</Text>
               <Text style={styles.sliderLabel}>30°C</Text>
-              <Text style={styles.sliderLabel}>40°C</Text>
-              <Text style={styles.sliderLabel}>50°C</Text>
+              <Text style={styles.sliderLabel}>70°C</Text>
             </View>
 
             <View style={styles.presetRow}>
               <Preset
                 label="Low"
-                value={34}
+                value={-5}
                 setTemp={setTemperature}
                 active={activePreset === "low"}
                 onPress={() => setActivePreset("low")}
               />
               <Preset
                 label="Med"
-                value={40}
+                value={30}
                 setTemp={setTemperature}
                 active={activePreset === "med"}
                 onPress={() => setActivePreset("med")}
               />
               <Preset
                 label="High"
-                value={45}
+                value={60}
                 setTemp={setTemperature}
                 active={activePreset === "high"}
                 onPress={() => setActivePreset("high")}
@@ -135,7 +175,7 @@ export default function TestScreen() {
                   styles.massageBox,
                   massageMode === "off" && styles.massageBoxActive,
                 ]}
-                onPress={() => setMassageMode("off")}
+                onPress={() => handleMassageModeChange("off")}
               >
                 <PowerOff
                   size={24}
@@ -156,7 +196,7 @@ export default function TestScreen() {
                   styles.massageBox,
                   massageMode === "soft" && styles.massageBoxActive,
                 ]}
-                onPress={() => setMassageMode("soft")}
+                onPress={() => handleMassageModeChange("soft")}
               >
                 <BarChart3
                   size={24}
@@ -177,7 +217,7 @@ export default function TestScreen() {
                   styles.massageBox,
                   massageMode === "pulse" && styles.massageBoxActive,
                 ]}
-                onPress={() => setMassageMode("pulse")}
+                onPress={() => handleMassageModeChange("pulse")}
               >
                 <Activity
                   size={24}
@@ -198,7 +238,7 @@ export default function TestScreen() {
                   styles.massageBox,
                   massageMode === "deep" && styles.massageBoxActive,
                 ]}
-                onPress={() => setMassageMode("deep")}
+                onPress={() => handleMassageModeChange("deep")}
               >
                 <Waves
                   size={24}
