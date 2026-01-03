@@ -27,7 +27,7 @@ export default function Index() {
   }
 
   if (!isLoggedIn) {
-    return <Redirect href="/(auth)/login" />;
+    return <Redirect href="/(tabs)/test" />;
   }
 
   return <Redirect href="/(tabs)" />;
