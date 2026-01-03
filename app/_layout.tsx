@@ -1,12 +1,5 @@
 import { Stack } from "expo-router";
 
 export default function RootLayout() {
-  return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="(tabs)" />
-      <Stack.Screen name="signup" />
-      <Stack.Screen name="pearsonalPRF" />
-      <Stack.Screen name="editProfile" />
-    </Stack>
-  );
+  return <Stack screenOptions={{ headerShown: false }} />;
 }

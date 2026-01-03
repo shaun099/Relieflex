@@ -1,20 +1,31 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  Pressable,
-  Image,
-  ScrollView,
-} from "react-native";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import React, { useState } from "react";
+import {
+  Alert,
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+
+const DEFAULT_EMAIL = "admin@relieflex.com";
+const DEFAULT_PASSWORD = "relief123";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const handleLogin = () => {
+    if ((email === DEFAULT_EMAIL || email === "1") && (password === DEFAULT_PASSWORD || password === "1")) {
+      router.replace("/(tabs)");
+    } else {
+      Alert.alert("Login failed", "Invalid email or password");
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -31,9 +42,9 @@ export default function LoginScreen() {
 
         {/* Title */}
         <View style={styles.header}>
-          <Text style={styles.title}>Welcome Back</Text>
+          <Text style={styles.title}>RelieFLEX</Text>
           <Text style={styles.subtitle}>
-            Sign in to control your thermal band and track your vitals.
+            A Smart Flexible Thermohaptic Bandage
           </Text>
         </View>
 
@@ -53,7 +64,7 @@ export default function LoginScreen() {
             <MaterialIcons
               name="mail-outline"
               size={20}
-              color="#888"
+              color="#999292ff"
               style={styles.inputIcon}
             />
           </View>
@@ -89,7 +100,7 @@ export default function LoginScreen() {
         </View>
 
         {/* Login Button */}
-        <Pressable style={styles.loginButton}>
+        <Pressable style={styles.loginButton} onPress={handleLogin}>
           <Text style={styles.loginText}>Log In</Text>
         </Pressable>
 
@@ -122,10 +133,7 @@ export default function LoginScreen() {
         <View style={styles.footer}>
           <Text style={styles.footerText}>
             Don&apos;t have an account?{" "}
-            <Text
-              style={styles.signup}
-              onPress={() => router.push("/signup")}
-            >
+            <Text style={styles.signup} onPress={() => router.push("/signup")}>
               Sign up
             </Text>
           </Text>
@@ -151,7 +159,7 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 14,
-    backgroundColor: "#141414",
+    backgroundColor: "#b20e0eff",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -167,7 +175,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 15,
-    color: "#777",
+    color: "#866666ff",
     textAlign: "center",
     marginTop: 8,
     maxWidth: 280,
@@ -182,10 +190,10 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   inputWrapper: {
-    backgroundColor: "#fff",
+    backgroundColor: "#ffffffff",
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: "#e5e5e5",
+    borderColor: "#ba9e9eff",
     height: 54,
     justifyContent: "center",
   },
@@ -272,6 +280,6 @@ const styles = StyleSheet.create({
   },
   signup: {
     fontWeight: "700",
-    color: "#141414",
+    color: "#9d2828ff",
   },
 });
