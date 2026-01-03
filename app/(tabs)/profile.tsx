@@ -3,19 +3,22 @@ import { useRouter } from "expo-router";
 import React from "react";
 
 import {
-  Image, Pressable,
+  Image,
+  Pressable,
   ScrollView,
+  StatusBar,
   StyleSheet,
   Text,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ProfileScreen() {
   const router = useRouter();
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
+      <StatusBar barStyle="dark-content" backgroundColor="#f7f7f7" />
       <ScrollView showsVerticalScrollIndicator={false}>
-
         {/* Top App Bar */}
         <View style={styles.topBar}>
           <Image
@@ -27,9 +30,9 @@ export default function ProfileScreen() {
 
           <Text style={styles.name}>Alex Morgan</Text>
 
-<Pressable onPress={() => router.push("/editProfile")}>
-  <Ionicons name="settings-outline" size={22} color="#333" />
-</Pressable>
+          <Pressable onPress={() => router.push("/editProfile")}>
+            <Ionicons name="settings-outline" size={22} color="#333" />
+          </Pressable>
         </View>
 
         {/* Comfort Score */}
@@ -111,7 +114,7 @@ export default function ProfileScreen() {
 
         <View style={{ height: 40 }} />
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -135,15 +138,7 @@ function StatBox({
   );
 }
 
-function Session({
-  title,
-  mode,
-  temp,
-  time,
-  ago,
-  color,
-  icon,
-}: any) {
+function Session({ title, mode, temp, time, ago, color, icon }: any) {
   return (
     <View style={styles.session}>
       <View style={styles.sessionLeft}>
